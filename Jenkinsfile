@@ -83,7 +83,7 @@ pipeline {
         }
         // 如果成功，打印成功信息
         success {
-            echo "✅ Deployment successful! App is running on port  $ {HOST_PORT}"
+            echo "✅ Deployment successful! App is running on port  ${HOST_PORT}"
         }
         // 总是清理临时镜像（可选）
         always {
