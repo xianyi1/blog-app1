@@ -46,7 +46,7 @@ pipeline {
                 sh """
                     docker run -d \
                       --name my-flask-app \
-                      -p ${HOST_PORT}:5000 \  // 修正端口语法
+                      -p ${HOST_PORT}:5000 \  
                       ${IMAGE_NAME}
                 """
                 sh 'sleep 5'
