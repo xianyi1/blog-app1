@@ -43,12 +43,7 @@ pipeline {
                 sh 'docker stop my-flask-app || true'
                 sh 'docker rm my-flask-app || true'
                 sh "docker pull ${IMAGE_NAME}"
-                sh """
-                    docker run -d \
-                      --name my-flask-app \
-                      -p ${HOST_PORT}:5000 \  
-                      ${IMAGE_NAME}
-                """
+                sh "docker run -d --name my-flask-app -p ${HOST_PORT}:5000 ${IMAGE_NAME}"
                 sh 'sleep 5'
                 // 修正健康检查命令
                 sh "curl -f http://localhost:${HOST_PORT} || exit 1"
