@@ -7,9 +7,9 @@ pipeline {
     // 定义环境变量，可在整个流水线中使用
     environment {
         // 从 Jenkins 凭据中读取 Docker Hub 用户名（需提前配置）
-        DOCKER_HUB_USERNAME = credentials('docker-hub-username')
+        DOCKER_HUB_USERNAME = credentials('docker-hub-creds')
         // 从 Jenkins 凭据中读取 Docker Hub 密码（需提前配置）
-        DOCKER_HUB_PASSWORD = credentials('docker-hub-password')
+        DOCKER_HUB_PASSWORD = credentials('docker-hub-creds')
         // 镜像名称：格式为 <用户名>/<仓库名>:<标签>
         IMAGE_NAME = "chaojiwudidaxianyu/blog-app1: ${env.BUILD_NUMBER}"
         // 应用在宿主机上暴露的端口
