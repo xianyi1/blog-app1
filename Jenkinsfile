@@ -5,7 +5,7 @@ pipeline {
         // 正确使用复合凭据 (类型应为 Username with password)
         DOCKER_HUB_CREDS = credentials('docker-hub-creds')
         IMAGE_NAME = "chaojiwudixianyu/blog-app1:${env.BUILD_NUMBER}"
-        HOST_PORT = "8080"
+        HOST_PORT = "8081"
     }
 
     stages {
