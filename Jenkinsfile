@@ -7,11 +7,9 @@ pipeline {
     // 定义环境变量，可在整个流水线中使用
     environment {
         // 从 Jenkins 凭据中读取 Docker Hub 用户名（需提前配置）
-        DOCKER_HUB_USERNAME = credentials('docker-hub-creds')
-        // 从 Jenkins 凭据中读取 Docker Hub 密码（需提前配置）
-        DOCKER_HUB_PASSWORD = credentials('docker-hub-creds')
+        DOCKER_HUB_CREDS = credentials('docker-hub-creds')
         // 镜像名称：格式为 <用户名>/<仓库名>:<标签>
-        IMAGE_NAME = "chaojiwudixianyu/blog-app1: ${env.BUILD_NUMBER}"
+        IMAGE_NAME = "chaojiwudixianyu/blog-app1:${env.BUILD_NUMBER}"
         // 应用在宿主机上暴露的端口
         HOST_PORT = "8080"
     }
@@ -26,7 +24,7 @@ pipeline {
                 // 从 GitHub 拉取最新代码（Jenkins Job 配置中已关联仓库）
                 checkout scm
                 // 打印当前 Git 提交信息（用于日志追踪）
-                sh 'echo "Building commit:  $ (git rev-parse HEAD)"'
+                sh 'echo "Building commit:  $(git rev-parse HEAD)"'
             }
         }
 
@@ -35,11 +33,11 @@ pipeline {
             steps {
                 // 登录 Docker Hub（使用环境变量中的凭据）
                 sh '''
-			echo "$DOCKER_HUB_PASSWORD" |
-			docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+			echo "$DOCKER_HUB_CREDS" |
+			docker login -u "$DOCKER_HUB_CREDS" --password-stdin
 		 '''
                 // 构建镜像，使用上面定义的 IMAGE_NAME 作为标签
-                sh "docker build -t  ${IMAGE_NAME} ."
+                sh "docker build -t ${IMAGE_NAME} ."
                 // 可选：本地测试镜像是否能正常启动（非必须）
                 // sh "docker run -d --name test-container -p 9999:5000  ${IMAGE_NAME} && sleep 5 && docker stop test-container && docker rm test-container"
             }
@@ -49,7 +47,7 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 // 推送构建好的镜像到 Docker Hub
-                sh "docker push  ${IMAGE_NAME}"
+                sh "docker push ${IMAGE_NAME}"
                 // 注销 Docker 登录（安全最佳实践）
                 sh "docker logout"
             }
@@ -67,13 +65,13 @@ pipeline {
                 sh """
                     docker run -d \
                       --name my-flask-app \
-                      -p  ${HOST_PORT}:5000 \
+                      -p ${HOST_PORT}:5000 \
                        ${IMAGE_NAME}
                 """
                 // 等待 5 秒让容器启动
                 sh 'sleep 5'
                 // 验证服务是否响应（健康检查）
-                sh 'curl -f http://localhost: ${HOST_PORT} || exit 1'
+                sh "curl -f http://localhost: ${HOST_PORT} || exit 1"
             }
         }
     }
