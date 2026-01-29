@@ -34,11 +34,11 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 // 登录 Docker Hub（使用环境变量中的凭据）
-                sh "echo " $ {DOCKER_HUB_PASSWORD}" | docker login -u " $ {DOCKER_HUB_USERNAME}" --password-stdin"
+                sh "echo " ${DOCKER_HUB_PASSWORD}" | docker login -u " ${DOCKER_HUB_USERNAME}" --password-stdin"
                 // 构建镜像，使用上面定义的 IMAGE_NAME 作为标签
-                sh "docker build -t  $ {IMAGE_NAME} ."
+                sh "docker build -t  ${IMAGE_NAME} ."
                 // 可选：本地测试镜像是否能正常启动（非必须）
-                // sh "docker run -d --name test-container -p 9999:5000  $ {IMAGE_NAME} && sleep 5 && docker stop test-container && docker rm test-container"
+                // sh "docker run -d --name test-container -p 9999:5000  ${IMAGE_NAME} && sleep 5 && docker stop test-container && docker rm test-container"
             }
         }
 
@@ -46,7 +46,7 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 // 推送构建好的镜像到 Docker Hub
-                sh "docker push  $ {IMAGE_NAME}"
+                sh "docker push  ${IMAGE_NAME}"
                 // 注销 Docker 登录（安全最佳实践）
                 sh "docker logout"
             }
@@ -59,18 +59,18 @@ pipeline {
                 sh 'docker stop my-flask-app || true'
                 sh 'docker rm my-flask-app || true'
                 // 拉取最新镜像（确保是最新的）
-                sh "docker pull  $ {IMAGE_NAME}"
+                sh "docker pull  ${IMAGE_NAME}"
                 // 启动新容器，映射端口 8080 -> 容器 5000
                 sh """
                     docker run -d \
                       --name my-flask-app \
-                      -p  $ {HOST_PORT}:5000 \
-                       $ {IMAGE_NAME}
+                      -p  ${HOST_PORT}:5000 \
+                       ${IMAGE_NAME}
                 """
                 // 等待 5 秒让容器启动
                 sh 'sleep 5'
                 // 验证服务是否响应（健康检查）
-                sh 'curl -f http://localhost: $ {HOST_PORT} || exit 1'
+                sh 'curl -f http://localhost: ${HOST_PORT} || exit 1'
             }
         }
     }
