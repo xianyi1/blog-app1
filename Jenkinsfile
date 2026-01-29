@@ -34,7 +34,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 // 登录 Docker Hub（使用环境变量中的凭据）
-                sh "echo " ${DOCKER_HUB_PASSWORD}" | docker login -u " ${DOCKER_HUB_USERNAME}" --password-stdin"
+                sh 'echo " ${DOCKER_HUB_PASSWORD}" | docker login -u " ${DOCKER_HUB_USERNAME}" --password-stdin'
                 // 构建镜像，使用上面定义的 IMAGE_NAME 作为标签
                 sh "docker build -t  ${IMAGE_NAME} ."
                 // 可选：本地测试镜像是否能正常启动（非必须）
